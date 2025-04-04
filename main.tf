@@ -34,12 +34,3 @@ module "ec2" {
   public_sg_id      = module.vpc.public_sg_id
   private_sg_id     = module.vpc.private_sg_id
 }
-
-/* module "ecs" {
-  source                   = "./modules/ecs"
-  project_name             = var.project_name
-  public_subnet_ids        = module.vpc.public_subnet_ids
-  security_group_id        = module.vpc.public_sg_id
-  # Caso precise acessar o bucket S3, você pode passar variáveis ou criar uma role
-  s3_bucket_name           = module.s3.bucket_name
-} */

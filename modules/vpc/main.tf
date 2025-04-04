@@ -14,7 +14,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.this.id
-  cidr_block             = var.public_subnet_cidr
+  cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
   tags = {
@@ -112,93 +112,100 @@ resource "aws_security_group" "public_sg" {
 
   # Regra para HTTP (porta 80)
   ingress {
-    description      = "Allow HTTP"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"] # Liberado para todos (em produção restrinja)
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Liberado para todos (em produção restrinja)
   }
 
   # Regra para HTTPS (porta 443)
   ingress {
-    description      = "Allow HTTPS"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"] # Liberado para todos (em produção restrinja)
+    description = "Allow HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Liberado para todos (em produção restrinja)
   }
 
   # Regra para SSH (opcional - apenas se precisar)
   ingress {
-    description      = "Allow SSH from my IP"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"] # Substitua pelo seu IP público
+    description = "Allow SSH from my IP"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Substitua pelo seu IP público
   }
 
   # Regra de egress (saída) padrão
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-# Security group privado (manter apenas este)
 resource "aws_security_group" "private_sg" {
   name        = "${var.project_name}-private-sg"
-  description = "Allow access from public SG and internal ports"
+  description = "Allow access from public SG and internal VPC traffic"
   vpc_id      = aws_vpc.this.id
 
-  # Regra para HTTP (porta 80) - apenas da VPC ou do SG público
+  # Regra para tráfego interno na VPC (todos protocolos)
   ingress {
-    description      = "Allow HTTP from public SG"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.public_sg.id] # Restrito ao SG público
+    description = "Allow all internal VPC traffic"
+    from_port   = 0  # Obrigatório ser 0 quando protocol é "-1"
+    to_port     = 0  # Obrigatório ser 0 quando protocol é "-1"
+    protocol    = "-1"
+    cidr_blocks = [var.vpc_cidr_block] # "10.0.0.0/22"
   }
 
-  # Regra para porta 8080 - apenas da VPC ou do SG público
+  # Regra para HTTP (porta 80) - apenas do SG público
   ingress {
-    description      = "Allow 8080 from public SG"
-    from_port        = 8080
-    to_port          = 8080
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.public_sg.id] # Restrito ao SG público
+    description     = "Allow HTTP from public SG"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.public_sg.id]
   }
 
-  # Regra para SSH - apenas da EC2 pública
+  # Regra para porta 8080 - apenas do SG público
   ingress {
-    description      = "Allow SSH from public SG"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.public_sg.id]
+    description     = "Allow 8080 from public SG"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.public_sg.id]
+  }
+
+  # Regra para MySQL (porta 3306) - apenas da VPC
+  ingress {
+    description = "Allow MySQL from private subnets"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [var.private_subnet_cidr, var.private_subnet_cidr_b] # ["10.0.2.0/24", "10.0.3.0/24"]
+  }
+
+  # Regra para SSH - apenas do SG público
+  ingress {
+    description     = "Allow SSH from public SG"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.public_sg.id]
   }
 
   # Regra de egress (saída) padrão
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_name}-private-sg"
   }
 }
-
-# Regra adicional para RDS (mantenha esta)
-resource "aws_security_group_rule" "rds_ingress" {
-  type        = "ingress"
-  from_port   = 3306
-  to_port     = 3306
-  protocol    = "tcp"
-  cidr_blocks = ["10.0.0.0/22"]  # Usando o CIDR da sua VPC
-  security_group_id = aws_security_group.private_sg.id
-}
-
-
-
-
-
