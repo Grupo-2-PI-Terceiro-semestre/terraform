@@ -8,12 +8,12 @@ module "vpc" {
 }
 
 
-module "s3" {
+/* module "s3" {
   source        = "./modules/s3"
   project_name  = var.project_name
   bucket_suffix = "images-orderhub"
 }
-
+ */
 module "rds" {
   source             = "./modules/rds"
   project_name       = var.project_name

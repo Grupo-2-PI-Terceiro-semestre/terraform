@@ -18,7 +18,7 @@ resource "aws_db_instance" "this" {
   db_subnet_group_name    = aws_db_subnet_group.this.name
   vpc_security_group_ids  = var.security_group_ids
   skip_final_snapshot     = true
-  publicly_accessible     = false  # IMPORTANTE: false para subnets privadas
+  publicly_accessible     = false
 
   tags = {
     Name = "${var.project_name}-rds"
