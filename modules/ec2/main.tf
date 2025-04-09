@@ -25,19 +25,19 @@ resource "aws_instance" "public_instance" {
   }
 }
 
-# EC2 privada que roda a API e inicializa o schema no RDS
-resource "aws_instance" "private_instance" {
+resource "aws_instance" "private_instances" {
+  count                  = 2
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = var.private_subnet_id
   vpc_security_group_ids = [var.private_sg_id]
   key_name               = aws_key_pair.generated_key.key_name
-  private_ip             = "10.0.2.192"
+  private_ip             = element(["10.0.2.192", "10.0.2.193"], count.index)
 
   user_data = <<-EOF
   #!/bin/bash
 
-  sleep 300
+  sleep 180
 
   cat > /tmp/update.sh <<'SH'
   ${file("instance.sh")}
@@ -55,8 +55,8 @@ resource "aws_instance" "private_instance" {
   sudo /tmp/update.sh
 EOF
 
-
   tags = {
-    Name = "${var.project_name}-private-ec2"
+    Name = "${var.project_name}-private-ec2-${count.index + 1}"
   }
 }
+
