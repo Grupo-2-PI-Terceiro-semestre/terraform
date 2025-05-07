@@ -26,11 +26,11 @@ module "rds" {
 
 
 module "ec2" {
-  source            = "./modules/ec2"
-  project_name      = var.project_name
-  ami_id            = "ami-084568db4383264d4" # Atualize para sua região
-  public_subnet_id  = module.vpc.public_subnet_ids[0]
-  private_subnet_id = module.vpc.private_subnet_ids[0]
-  public_sg_id      = module.vpc.public_sg_id
-  private_sg_id     = module.vpc.private_sg_id
+  source             = "./modules/ec2"
+  project_name       = var.project_name
+  ami_id             = "ami-084568db4383264d4"
+  public_subnet_id   = module.vpc.public_subnet_ids[0]
+  private_subnet_id  = module.vpc.private_subnet_ids[0]
+  public_sg_id       = module.vpc.public_sg_id
+  private_sg_id      = module.vpc.private_sg_id
 }

@@ -11,36 +11,48 @@ resource "aws_instance" "public_instance" {
   subnet_id              = var.public_subnet_id
   vpc_security_group_ids = [var.public_sg_id]
   key_name               = aws_key_pair.generated_key.key_name
+  private_ip             = "10.0.0.10"
 
   user_data = <<-EOF
-    #!/bin/bash
-    sudo apt update -y
-    sudo apt install docker.io -y
-    sudo docker pull jonathancarvalho039/front-end-app
-    sudo docker run -d -p 80:80 --name front-end-app jonathancarvalho039/front-end-app
-  EOF
+  #!/bin/bash
+
+  sleep 15
+
+  cat > /tmp/instance.sh <<'SH'
+  ${file("instance-front.sh")}
+  SH
+
+  chmod +x /tmp/instance.sh
+  bash /tmp/instance.sh
+
+  bash /tmp/pipe.sh
+
+EOF
 
   tags = {
     Name = "${var.project_name}-public-ec2"
   }
 }
 
-resource "aws_instance" "private_instances" {
-  count                  = 2
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.public_instance.id
+  allocation_id = "eipalloc-025ebb893d31bd7ec"
+}
+
+resource "aws_instance" "private_instance_primary" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = var.private_subnet_id
   vpc_security_group_ids = [var.private_sg_id]
   key_name               = aws_key_pair.generated_key.key_name
-  private_ip             = element(["10.0.2.192", "10.0.2.193"], count.index)
+  private_ip             = "10.0.2.192"
 
   user_data = <<-EOF
   #!/bin/bash
+  sleep 120
 
-  sleep 180
-
-  cat > /tmp/update.sh <<'SH'
-  ${file("instance.sh")}
+  cat > /tmp/instance.sh <<'SH'
+  ${file("instance-back.sh")}
   SH
 
   cat > /tmp/schema.sql <<'SQL'
@@ -51,12 +63,39 @@ resource "aws_instance" "private_instances" {
   ${file("data.sql")}
   SQL
 
-  chmod +x /tmp/update.sh
-  sudo /tmp/update.sh
-EOF
+  chmod +x /tmp/instance.sh
+  sudo /tmp/instance.sh
+  EOF
 
   tags = {
-    Name = "${var.project_name}-private-ec2-${count.index + 1}"
+    Name = "${var.project_name}-private-ec2-primary"
   }
 }
+
+resource "aws_instance" "private_instance_secondary" {
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = var.private_subnet_id
+  vpc_security_group_ids = [var.private_sg_id]
+  key_name               = aws_key_pair.generated_key.key_name
+  private_ip             = "10.0.2.193"
+
+  user_data = <<-EOF
+  #!/bin/bash
+  sleep 130
+
+  cat > /tmp/instance.sh <<'SH'
+  ${file("instance-back.sh")}
+  SH
+
+  chmod +x /tmp/instance.sh
+  sudo /tmp/instance.sh
+  EOF
+
+  tags = {
+    Name = "${var.project_name}-private-ec2-secondary"
+  }
+}
+
+
 

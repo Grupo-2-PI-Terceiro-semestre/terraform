@@ -22,20 +22,20 @@ VALUES ('Esteticista');
 INSERT INTO funcao (nome_funcao)
 VALUES ('Recepcionista');
 
--- Endereços para as empresas
-INSERT INTO endereco (bairro, cep, cidade, complemento, estado, logradouro, numero)
-VALUES
-    ('Cerqueira César', '01414-001', 'São Paulo', 'Apto 456', 'SP', 'Rua Haddock Lobo', '595'),
-    ('Centro', '20010-000', 'Rio de Janeiro', 'Sala 101', 'RJ', 'Av. Presidente Vargas', '1000'),
-    ('Savassi', '30112-010', 'Belo Horizonte', 'Loja 5', 'MG', 'Rua Pernambuco', '123'),
-    ('Boa Viagem', '51020-010', 'Recife', 'Casa', 'PE', 'Rua dos Navegantes', '456'),
-    ('Batel', '80420-090', 'Curitiba', 'Conjunto 1203', 'PR', 'Av. Batel', '789'),
-    ('Jardim Goiás', '74810-010', 'Goiânia', 'Qd. 45 Lt. 10', 'GO', 'Av. Jamel Cecílio', '250'),
-    ('Praia do Canto', '29055-250', 'Vitória', 'Bloco B', 'ES', 'Rua Aleixo Neto', '100'),
-    ('Asa Sul', '70390-010', 'Brasília', 'Edifício Brasília Center', 'DF', 'SQS 202', '3'),
-    ('Trindade', '88036-000', 'Florianópolis', 'Cobertura', 'SC', 'Rua Lauro Linhares', '890'),
-    ('Meireles', '60160-150', 'Fortaleza', 'Apartamento 802', 'CE', 'Av. Beira Mar', '555'),
-    ('Vila Mariana', '04018-001', 'São Paulo', 'Sala 204', 'SP', 'Rua Vergueiro', '1001');
+INSERT INTO endereco (bairro, cep, cidade, complemento, estado, logradouro, numero, latitude, longitude) VALUES
+('Cerqueira César', '01414-905', 'São Paulo', '', 'SP', 'Rua Haddock Lobo', '1000', '-23.5605724', '-46.6644755'),
+('Bela Vista', '01310-300', 'São Paulo', 'de 2134 ao fim - lado par', 'SP', 'Avenida Paulista', '2202', '-23.5575252', '-46.66038169999999'),
+('Jardim Record', '06784-210', 'Taboão da Serra', '', 'SP', 'Rua João Pereira dos Santos', '123', null, null),
+('Cerqueira César', '01413-000', 'São Paulo', 'de 1681 a 2429 - lado ímpar', 'SP', 'Rua Augusta', '1801', '-23.558713', '-46.6606999'),
+('Cerqueira César', '01418-200', 'São Paulo', 'de 2154 ao fim - lado par', 'SP', 'Alameda Santos', '2300', '-23.5582822', '-46.6617526'),
+('Cerqueira César', '01418-200', 'São Paulo', 'de 2154 ao fim - lado par', 'SP', 'Alameda Santos', '2335', '-23.5581665', '-46.6625583'),
+('Bela Vista', '01310-200', 'São Paulo', 'de 1512 a 2132 - lado par', 'SP', 'Avenida Paulista', '1710', '-23.5605266', '-46.65700469999999'),
+('Cerqueira César', '01414-000', 'São Paulo', 'até 1048 - lado par', 'SP', 'Rua Haddock Lobo', '614', '-23.5579233', '-46.6620658'),
+('Trindade', '88036-000', 'Florianópolis', 'Cobertura', 'SC', 'Rua Lauro Linhares', '890', null, null),
+('Meireles', '60160-150', 'Fortaleza', 'Apartamento 802', 'CE', 'Av. Beira Mar', '555', null, null),
+('Vila Mariana', '04018-001', 'São Paulo', 'Sala 204', 'SP', 'Rua Vergueiro', '1001', null, null);
+
+
 
 INSERT INTO empresa (fk_endereco, fk_categoria, url_logo, cnpj, email_empresa, nome_empresa, telefone)
 VALUES (1, 2, 'https://storage.googleapis.com/udois-261822.appspot.com/imagens-templates/thumbnail_1735372022031662324a1938845.webp', '96541975000104',
@@ -129,30 +129,12 @@ VALUES
     (4, 40.00, 'Spa para Pés', 'Hidratação e cuidados especiais para os pés.', '#40E0D0', '01:00:00', 'ATIVO'),
     (4, 35.00, 'Manicure Completa', 'Pacote completo com cutilagem, esmaltação e hidratação.', '#8A2BE2', '01:15:00', 'ATIVO');
 
--- Serviços para a Empresa 4
 
-INSERT INTO empresa (fk_endereco, fk_categoria, url_logo, cnpj, email_empresa, nome_empresa, telefone)
-VALUES (5, 4, 'https://artpoin.com/wp-content/uploads/2019/11/132213-scaled.png', '66325467000110',
-        'contato@esteticanova.com', 'Estética Nova', '+5511955554444');
-
-INSERT INTO servico (fk_empresa, valor_servico, nome_servico, descricao, cor_referencia_hex, duracao, status_atividade)
-VALUES
-    (5, 100.00, 'Limpeza de Pele', 'Limpeza profunda para remoção de impurezas da pele.', '#FFC300', '01:30:00', 'ATIVO'),
-    (5, 120.00, 'Peeling Facial', 'Tratamento para renovação da pele.', '#CD5C5C', '01:00:00', 'ATIVO'),
-    (5, 80.00, 'Hidratação Facial', 'Hidratação intensa para uma pele mais saudável.', '#4682B4', '00:45:00', 'ATIVO'),
-    (5, 150.00, 'Tratamento Anti-Aging', 'Redução de linhas de expressão e rejuvenescimento.', '#8B4513', '02:00:00', 'ATIVO'),
-    (5, 200.00, 'Massagem Corporal', 'Massagem relaxante para alívio de tensões.', '#FF69B4', '01:30:00', 'ATIVO');
-
--- Serviços para a Empresa 5
-
-INSERT INTO empresa (fk_endereco, fk_categoria, url_logo, cnpj, email_empresa, nome_empresa, telefone)
-VALUES (6, 5, 'https://i.pinimg.com/736x/ec/6d/f6/ec6df648a26bc7dcf282cf0d65786040.jpg', '66325467000110',
-        'contato@sobrancelhaplus.com', 'Sobrancelha Plus', '+5511944443333');
-
-INSERT INTO servico (fk_empresa, valor_servico, nome_servico, descricao, cor_referencia_hex, duracao, status_atividade)
-VALUES
-    (6, 40.00, 'Design de Sobrancelhas', 'Design especializado para sobrancelhas.', '#581845', '00:30:00', 'ATIVO'),
-    (6, 50.00, 'Henna', 'Aplicação de henna para realce das sobrancelhas.', '#2F4F4F', '00:45:00', 'ATIVO'),
-    (6, 70.00, 'Micropigmentação', 'Técnica de preenchimento semipermanente.', '#9932CC', '02:00:00', 'ATIVO'),
-    (6, 60.00, 'Laminação de Sobrancelhas', 'Realce natural com alinhamento perfeito.', '#20B2AA', '01:00:00', 'ATIVO'),
-    (6, 45.00, 'Tingimento de Sobrancelhas', 'Coloração especial para destacar as sobrancelhas.', '#FF6347', '00:30:00', 'ATIVO');
+INSERT INTO usuarios(fk_empresa, fk_endereco, representante, tipos_de_usuario, cpf, email_pessoa,
+                     firebase_uid, fk_funcao, nome_pessoa, numero_telefone, senha, status_atividade) VALUES
+    (2, 2, 1, 0, '12345678901', 'admin@belezaexpress.com', '', 1, 'Administrador Belezza Express', NULL,
+     '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.', 'ATIVO'),
+    (3, 3, 1, 0, '12345678902', 'admin@barberking.com', '', 1, 'Administrador Barber King', NULL,
+     '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.', 'ATIVO'),
+    (4, 4, 1, 0, '12345678903', 'admin@topmanicure.com', '', 1, 'Administrador Top Manicure', NULL,
+     '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.', 'ATIVO')
